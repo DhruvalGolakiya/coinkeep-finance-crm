@@ -125,10 +125,10 @@ export const create = mutation({
           : account.balance - args.amount, // Normal: deduct from bank/cash
       });
       
-      // Destination account: add (or subtract if transferring TO a liability, which pays off debt)
+      // Destination account: add (or if liability, ADD to bring negative balance towards 0)
       await ctx.db.patch(args.toAccountId, {
         balance: isDestLiability
-          ? toAccount.balance - args.amount  // Paying liability = REDUCE debt
+          ? toAccount.balance + args.amount  // Paying liability: -100 + 100 = 0 (debt cleared)
           : toAccount.balance + args.amount, // Normal: add to bank/cash
       });
     }
@@ -186,7 +186,7 @@ export const remove = mutation({
         if (toAccount) {
           await ctx.db.patch(transaction.toAccountId, {
             balance: isDestLiability
-              ? toAccount.balance + transaction.amount  // Reverse: add back to liability (restore debt)
+              ? toAccount.balance - transaction.amount  // Reverse: subtract to restore debt (0 - 100 = -100)
               : toAccount.balance - transaction.amount, // Reverse: deduct from bank/cash
           });
         }
