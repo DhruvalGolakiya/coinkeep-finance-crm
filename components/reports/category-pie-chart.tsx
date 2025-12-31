@@ -8,6 +8,7 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
+import { useFormatCurrency } from "@/lib/format";
 
 interface CategoryPieChartProps {
   data: Array<{
@@ -20,20 +21,13 @@ interface CategoryPieChartProps {
   type: "income" | "expense";
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
 export function CategoryPieChart({
   data,
   isLoading,
   type,
 }: CategoryPieChartProps) {
+  const formatCurrency = useFormatCurrency();
+
   if (isLoading) {
     return (
       <div className="flex h-[280px] items-center justify-center">

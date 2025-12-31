@@ -29,6 +29,7 @@ import {
   CartesianGrid,
   TooltipProps,
 } from "recharts";
+import { useFormatCurrency, useCurrencySymbol } from "@/lib/format";
 
 interface CashFlowChartProps {
   data: Array<{
@@ -41,54 +42,46 @@ interface CashFlowChartProps {
   className?: string;
 }
 
-function formatCurrency(value: number): string {
-  if (Math.abs(value) >= 1000) {
-    return `$${(value / 1000).toFixed(0)}k`;
-  }
-  return `$${value}`;
-}
-
-function formatCurrencyFull(value: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(value);
-}
-
-// Custom tooltip component
-function CustomTooltip({ active, payload, label }: TooltipProps<number, string>) {
-  if (!active || !payload || payload.length === 0) return null;
-
-  const income = payload.find(p => p.dataKey === "income")?.value ?? 0;
-  const expenses = payload.find(p => p.dataKey === "expenses")?.value ?? 0;
-
-  return (
-    <div className="rounded-lg border border-border bg-popover px-4 py-3 shadow-lg">
-      <p className="mb-2 text-sm font-medium">{label}</p>
-      <div className="space-y-1.5">
-        <div className="flex items-center justify-between gap-8">
-          <div className="flex items-center gap-2">
-            <div className="size-2.5 rounded-full bg-foreground" />
-            <span className="text-xs text-muted-foreground">Income</span>
-          </div>
-          <span className="text-xs font-medium">{formatCurrencyFull(Number(income))}</span>
-        </div>
-        <div className="flex items-center justify-between gap-8">
-          <div className="flex items-center gap-2">
-            <div className="size-2.5 rounded-full bg-muted-foreground" />
-            <span className="text-xs text-muted-foreground">Expense</span>
-          </div>
-          <span className="text-xs font-medium">{formatCurrencyFull(Number(expenses))}</span>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function CashFlowChart({ data, isLoading, className }: CashFlowChartProps) {
   const [period, setPeriod] = useState("monthly");
+  const formatCurrency = useFormatCurrency();
+  const currencySymbol = useCurrencySymbol();
+
+  const formatAxisValue = (value: number): string => {
+    if (Math.abs(value) >= 1000) {
+      return `${currencySymbol}${(value / 1000).toFixed(0)}k`;
+    }
+    return `${currencySymbol}${value}`;
+  };
+
+  const CustomTooltip = ({ active, payload, label }: TooltipProps<number, string>) => {
+    if (!active || !payload || payload.length === 0) return null;
+
+    const income = payload.find(p => p.dataKey === "income")?.value ?? 0;
+    const expenses = payload.find(p => p.dataKey === "expenses")?.value ?? 0;
+
+    return (
+      <div className="rounded-lg border border-border bg-popover px-4 py-3 shadow-lg">
+        <p className="mb-2 text-sm font-medium">{label}</p>
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-8">
+            <div className="flex items-center gap-2">
+              <div className="size-2.5 rounded-full bg-foreground" />
+              <span className="text-xs text-muted-foreground">Income</span>
+            </div>
+            <span className="text-xs font-medium">{formatCurrency(Number(income))}</span>
+          </div>
+          <div className="flex items-center justify-between gap-8">
+            <div className="flex items-center gap-2">
+              <div className="size-2.5 rounded-full bg-muted-foreground" />
+              <span className="text-xs text-muted-foreground">Expense</span>
+            </div>
+            <span className="text-xs font-medium">{formatCurrency(Number(expenses))}</span>
+          </div>
+        </div>
+      </div>
+    );
+  };
   
   // Find the current/latest month for the highlight
   const currentMonthIndex = data.length > 0 ? data.length - 1 : 0;
@@ -150,7 +143,7 @@ export function CashFlowChart({ data, isLoading, className }: CashFlowChartProps
                   fontSize={11}
                   tickLine={false}
                   axisLine={false}
-                  tickFormatter={formatCurrency}
+                  tickFormatter={formatAxisValue}
                   tick={{ fill: "hsl(var(--muted-foreground))" }}
                   width={50}
                 />

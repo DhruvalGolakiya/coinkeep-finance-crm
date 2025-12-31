@@ -108,27 +108,27 @@ export const create = mutation({
         balance: account.balance + args.amount,
       });
     } else if (args.type === "expense") {
+      const isLiability = account.type === "credit_card";
       await ctx.db.patch(args.accountId, {
-        balance: account.balance - args.amount,
+        balance: isLiability
+          ? account.balance + args.amount  // CC: expense increases debt (positive = owed)
+          : account.balance - args.amount, // Normal: deduct from bank/cash
       });
     } else if (args.type === "transfer" && args.toAccountId) {
       const toAccount = await ctx.db.get(args.toAccountId);
       if (!toAccount) throw new Error("Destination account not found");
       
-      const isSourceLiability = account.type === "credit_card";
       const isDestLiability = toAccount.type === "credit_card";
       
-      // Source account: deduct (or add if transferring FROM a liability, which reduces debt)
+      // Source account: always deduct (bank/cash paying off a CC)
       await ctx.db.patch(args.accountId, {
-        balance: isSourceLiability 
-          ? account.balance - args.amount  // Transferring FROM liability = less debt (rare)
-          : account.balance - args.amount, // Normal: deduct from bank/cash
+        balance: account.balance - args.amount,
       });
       
-      // Destination account: add (or if liability, ADD to bring negative balance towards 0)
+      // Destination: if CC, subtract to reduce debt; else add
       await ctx.db.patch(args.toAccountId, {
         balance: isDestLiability
-          ? toAccount.balance + args.amount  // Paying liability: -100 + 100 = 0 (debt cleared)
+          ? toAccount.balance - args.amount  // Paying CC: 500 - 100 = 400 owed
           : toAccount.balance + args.amount, // Normal: add to bank/cash
       });
     }
@@ -169,8 +169,11 @@ export const remove = mutation({
           balance: account.balance - transaction.amount,
         });
       } else if (transaction.type === "expense") {
+        const isLiability = account.type === "credit_card";
         await ctx.db.patch(transaction.accountId, {
-          balance: account.balance + transaction.amount,
+          balance: isLiability
+            ? account.balance - transaction.amount  // Reverse CC expense: reduce debt
+            : account.balance + transaction.amount, // Reverse normal: add back
         });
       } else if (transaction.type === "transfer" && transaction.toAccountId) {
         const toAccount = await ctx.db.get(transaction.toAccountId);
@@ -186,8 +189,8 @@ export const remove = mutation({
         if (toAccount) {
           await ctx.db.patch(transaction.toAccountId, {
             balance: isDestLiability
-              ? toAccount.balance - transaction.amount  // Reverse: subtract to restore debt (0 - 100 = -100)
-              : toAccount.balance - transaction.amount, // Reverse: deduct from bank/cash
+              ? toAccount.balance + transaction.amount  // Reverse CC payment: restore debt
+              : toAccount.balance - transaction.amount, // Reverse normal: deduct
           });
         }
       }

@@ -23,24 +23,10 @@ import {
   Cell,
   Tooltip,
 } from "recharts";
-
-function formatCurrency(amount: number): string {
-  if (amount >= 1000) {
-    return `$${(amount / 1000).toFixed(1)}k`;
-  }
-  return `$${amount}`;
-}
-
-function formatCurrencyFull(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+import { useFormatCurrency } from "@/lib/format";
 
 export function SpendingBreakdown() {
+  const formatCurrency = useFormatCurrency();
   const categoryData = useQuery(api.analytics.getCategoryBreakdown, { type: "expense" });
   const isLoading = !categoryData;
 
@@ -93,7 +79,7 @@ export function SpendingBreakdown() {
             {/* Total at top */}
             <div className="flex items-baseline justify-between border-b border-border pb-3">
               <span className="text-sm text-muted-foreground">Total spent</span>
-              <span className="text-xl font-semibold">{formatCurrencyFull(total)}</span>
+              <span className="text-xl font-semibold">{formatCurrency(total)}</span>
             </div>
 
             {/* Horizontal Bar Chart */}
@@ -129,7 +115,7 @@ export function SpendingBreakdown() {
                         <div className="rounded-lg border border-border bg-popover px-3 py-2 shadow-lg">
                           <p className="text-xs font-medium">{data.name}</p>
                           <p className="text-xs text-muted-foreground">
-                            {formatCurrencyFull(data.amount)} ({data.percentage}%)
+                            {formatCurrency(data.amount)} ({data.percentage}%)
                           </p>
                         </div>
                       );

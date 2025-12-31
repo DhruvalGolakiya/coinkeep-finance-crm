@@ -18,6 +18,7 @@ import {
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import { Id } from "@/convex/_generated/dataModel";
+import { useFormatCurrency } from "@/lib/format";
 
 interface Transaction {
   _id: Id<"transactions">;
@@ -60,14 +61,6 @@ const typeConfig = {
   },
 };
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format(amount);
-}
-
 function formatDate(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString("en-US", {
     year: "numeric",
@@ -81,6 +74,8 @@ export function TransactionTable({
   onEdit,
   onDelete,
 }: TransactionTableProps) {
+  const formatCurrency = useFormatCurrency();
+
   return (
     <div className="rounded-lg border border-border">
       {/* Header */}

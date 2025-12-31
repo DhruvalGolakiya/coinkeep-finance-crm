@@ -24,6 +24,7 @@ import {
   PlusIcon,
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import { useFormatCurrency } from "@/lib/format";
 
 interface Account {
   _id: string;
@@ -48,16 +49,8 @@ const accountTypeConfig = {
   asset: { icon: HouseIcon },
 };
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
-
 export function AccountBalances({ accounts, isLoading }: AccountBalancesProps) {
+  const formatCurrency = useFormatCurrency();
   const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
 
   return (
