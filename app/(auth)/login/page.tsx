@@ -59,7 +59,7 @@ export default function LoginPage() {
             <div className="size-10 bg-primary flex items-center justify-center">
               <CurrencyCircleDollar className="size-6 text-primary-foreground" weight="fill" />
             </div>
-            <span className="text-xl font-semibold text-sidebar-foreground">FinanceFlow</span>
+            <span className="text-xl font-semibold text-sidebar-foreground">CoinKeep</span>
           </div>
           
           <div className="space-y-2">
@@ -104,7 +104,7 @@ export default function LoginPage() {
             <div className="size-10 bg-primary flex items-center justify-center">
               <CurrencyCircleDollar className="size-6 text-primary-foreground" weight="fill" />
             </div>
-            <span className="text-xl font-semibold">FinanceFlow</span>
+            <span className="text-xl font-semibold">CoinKeep</span>
           </div>
 
           <Card className="border-0 ring-0 shadow-none bg-transparent">

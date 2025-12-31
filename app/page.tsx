@@ -31,7 +31,7 @@ export default function RootPage() {
         <div className="size-10 bg-primary flex items-center justify-center">
           <CurrencyCircleDollar className="size-6 text-primary-foreground" weight="fill" />
         </div>
-        <span className="text-xl font-semibold">FinanceFlow</span>
+        <span className="text-xl font-semibold">CoinKeep</span>
       </div>
       <Spinner className="size-6" />
     </div>

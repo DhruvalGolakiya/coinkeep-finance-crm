@@ -23,7 +23,7 @@ const merriweather = Merriweather({
 });
 
 export const metadata: Metadata = {
-  title: "FinanceFlow CRM",
+  title: "CoinKeep CRM",
   description: "Your complete finance management solution",
 };
 

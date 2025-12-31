@@ -97,7 +97,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </div>
               <div className="flex flex-col leading-none group-data-[collapsible=icon]:hidden">
                 <span className="font-semibold tracking-tight">
-                  FinanceFlow
+                  CoinKeep
                 </span>
                 <span className="text-[10px] text-muted-foreground mt-0.5">
                   Finance CRM

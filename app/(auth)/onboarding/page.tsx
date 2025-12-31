@@ -476,7 +476,7 @@ export default function OnboardingPage() {
             <div className="size-8 bg-primary flex items-center justify-center">
               <CurrencyCircleDollar className="size-5 text-primary-foreground" weight="fill" />
             </div>
-            <span className="font-semibold">FinanceFlow</span>
+            <span className="font-semibold">CoinKeep</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Step {currentStepIndex + 1} of {totalSteps}</span>
@@ -732,7 +732,7 @@ function UseCaseStep({
   return (
     <Card className="border-0 ring-0 shadow-none bg-transparent">
       <CardHeader className="text-center">
-        <CardTitle className="text-xl">How will you use FinanceFlow?</CardTitle>
+        <CardTitle className="text-xl">How will you use CoinKeep?</CardTitle>
         <CardDescription>
           We&apos;ll customize your experience based on your needs
         </CardDescription>
